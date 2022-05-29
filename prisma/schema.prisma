@@ -9,3 +9,39 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Tests {
+  id                Int             @id @default(autoincrement())
+  name              String          @db.VarChar(100)
+  thumbnailUri      String?
+  numberOfQuestions Int
+  testPassingScore  Int
+  timeLimit         Int
+  createdAt         DateTime        @db.Timestamp(6)
+  updatedAt         DateTime?       @db.Timestamp(6)
+  TestQuestions     TestQuestions[]
+}
+
+model TestQuestions {
+  id          Int           @id @default(autoincrement())
+  testId      Int
+  type        String        @db.VarChar(30)
+  text        String
+  required    Boolean       @default(false)
+  hidden      Boolean       @default(false)
+  answer      Int?          @db.SmallInt
+  createdAt   DateTime      @db.Timestamp(6)
+  updatedAt   DateTime?     @db.Timestamp(6)
+  Test        Tests         @relation(fields: [testId], references: [id])
+  TestOptions TestOptions[]
+}
+
+model TestOptions {
+  id              Int           @id @default(autoincrement())
+  testQuestionId  Int
+  text            String
+  isCorrectAnswer Boolean
+  createdAt       DateTime      @db.Timestamp(6)
+  updatedAt       DateTime?     @db.Timestamp(6)
+  TestQuestion    TestQuestions @relation(fields: [testQuestionId], references: [id])
+}
