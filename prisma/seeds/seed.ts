@@ -1,20 +1,20 @@
 import { PrismaClient } from "@prisma/client";
-import { lessonsData } from "./models/lessons";
-import {lessonTestQuestionsData} from "./models/lessonTestQuestions";
-import {lessonTestOptionsData} from "./models/lessonTestOptions";
+import { testsData } from "./models/tests";
+import { testQuestionsData } from "./models/testQuestions";
+import { testOptionsData } from "./models/testOptions";
 
 const prisma = new PrismaClient();
 
 async function createSeedData() {
   try {
-    for (const lesson of lessonsData) {
-      await prisma.lessons.create({ data: lesson });
+    for (const test of testsData) {
+      await prisma.tests.create({ data: test });
     }
-    for (const lessonTestQuestion of lessonTestQuestionsData) {
-      await prisma.lessonTestQuestions.create({ data: lessonTestQuestion });
+    for (const testQuestion of testQuestionsData) {
+      await prisma.testQuestions.create({ data: testQuestion });
     }
-    for (const lessonTestOption of lessonTestOptionsData) {
-      await prisma.lessonTestOptions.create({ data: lessonTestOption });
+    for (const testOption of testOptionsData) {
+      await prisma.testOptions.create({ data: testOption });
     }
   } catch (error: unknown) {
     console.error(error);
