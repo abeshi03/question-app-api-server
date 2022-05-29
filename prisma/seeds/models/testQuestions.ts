@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import moment from "moment";
-import { questionType } from "../../../src/domain/LessonTestQuestions";
+import { questionType } from "../../../src/domain/TestQuestions";
 
 export const testQuestionsData: Prisma.TestQuestionsCreateInput[] = [
   {
@@ -10,7 +10,7 @@ export const testQuestionsData: Prisma.TestQuestionsCreateInput[] = [
     answer: 47,
     required: true,
     hidden: false,
-    createdAt: moment().format()
+    createdAt: moment().format(),
   },
   {
     Test: { connect: { id: 1 } },
@@ -19,7 +19,7 @@ export const testQuestionsData: Prisma.TestQuestionsCreateInput[] = [
     answer: 26,
     required: true,
     hidden: false,
-    createdAt: moment().format()
+    createdAt: moment().format(),
   },
   {
     Test: { connect: { id: 2 } },
@@ -27,7 +27,7 @@ export const testQuestionsData: Prisma.TestQuestionsCreateInput[] = [
     text: "信号機の色に含まれるのは？",
     required: true,
     hidden: false,
-    createdAt: moment().format()
+    createdAt: moment().format(),
   },
   {
     Test: { connect: { id: 2 } },
@@ -35,6 +35,6 @@ export const testQuestionsData: Prisma.TestQuestionsCreateInput[] = [
     text: "サービス業は？",
     required: true,
     hidden: false,
-    createdAt: moment().format()
+    createdAt: moment().format(),
   },
-]
+];
