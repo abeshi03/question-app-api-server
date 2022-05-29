@@ -9,3 +9,39 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Lessons {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(100)
+  thumbnailUri        String?
+  numberOfQuestions   Int
+  testPassingScore    Int
+  timeLimit           Int
+  createdAt           DateTime              @db.Timestamp(6)
+  updatedAt           DateTime?             @db.Timestamp(6)
+  LessonTestQuestions LessonTestQuestions[]
+}
+
+model LessonTestQuestions {
+  id                Int                 @id @default(autoincrement())
+  lessonId          Int
+  type              String              @db.VarChar(30)
+  text              String
+  required          Boolean             @default(false)
+  hidden            Boolean             @default(false)
+  answer            Int?                @db.SmallInt
+  createdAt         DateTime            @db.Timestamp(6)
+  updatedAt         DateTime?           @db.Timestamp(6)
+  Lesson            Lessons             @relation(fields: [lessonId], references: [id])
+  LessonTestOptions LessonTestOptions[]
+}
+
+model LessonTestOptions {
+  id                   Int                 @id @default(autoincrement())
+  lessonTestQuestionId Int
+  text                 String
+  isCorrectAnswer      Boolean
+  createdAt            DateTime            @db.Timestamp(6)
+  updatedAt            DateTime?           @db.Timestamp(6)
+  LessonTestQuestion   LessonTestQuestions @relation(fields: [lessonTestQuestionId], references: [id])
+}
