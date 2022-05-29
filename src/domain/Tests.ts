@@ -3,11 +3,11 @@ import { CreateTestQuestionPayload, TestQuestion } from "./TestQuestions";
 export interface CreateTestPayload {
   id: number;
   name: string;
-  thumbnailUri?: string;
+  thumbnailUri?: string | null;
   numberOfQuestions: number;
   testPassingScore: number;
   timeLimit: number;
-  TestQuestions: CreateTestQuestionPayload[];
+  TestQuestions?: CreateTestQuestionPayload[];
 }
 
 export class Test {
@@ -17,7 +17,7 @@ export class Test {
   private readonly _numberOfQuestions: number;
   private readonly _testPassingScore: number;
   private readonly _timeLimit: number;
-  private readonly _testQuestions: TestQuestion[];
+  private readonly _testQuestions?: TestQuestion[];
 
   public get id(): number {
     return this._id;
@@ -43,7 +43,7 @@ export class Test {
     return this._timeLimit;
   }
 
-  public get testQuestions(): TestQuestion[] {
+  public get testQuestions(): TestQuestion[] | undefined {
     return this._testQuestions;
   }
 
@@ -54,8 +54,10 @@ export class Test {
     this._numberOfQuestions = payload.numberOfQuestions;
     this._testPassingScore = payload.testPassingScore;
     this._timeLimit = payload.timeLimit;
-    this._testQuestions = payload.TestQuestions.map(
-      (testQuestion) => new TestQuestion(testQuestion)
-    );
+    if (payload.TestQuestions) {
+      this._testQuestions = payload.TestQuestions.map(
+        (testQuestion) => new TestQuestion(testQuestion)
+      );
+    }
   }
 }

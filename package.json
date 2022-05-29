@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/server.ts",
-    "start:nodemon": "nodemon src/server.ts",
+    "start": "ts-node src/infrastructure/server.ts",
+    "start:nodemon": "nodemon src/infrastructure/server.ts",
     "lint": "eslint src/index.ts",
     "lint:fix": "eslint --fix src/index.ts"
   },
