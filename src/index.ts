@@ -15,10 +15,10 @@ app.get("/", (req: express.Request, res: express.Response) => {
   res.send("Hello world!");
 });
 
+app.use("/tests", testRoutes(prisma));
+
 app.get("*", (req, res) => {
   return res.status(400).send({ error: "Invalid Url" });
 });
-
-app.use("/tests", testRoutes(prisma));
 
 export default app;
