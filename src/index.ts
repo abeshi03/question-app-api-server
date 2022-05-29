@@ -1,15 +1,15 @@
 /* --- フレームワーク、ライブラリー --------------------------------------------------------------------------------------- */
 import express, { Application } from "express";
-import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from "@prisma/client";
 
 const app: Application = express();
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 app.use(express.json());
 
 app.get("/", (req: express.Request, res: express.Response) => {
-  res.send("Hello world!")
+  res.send("Hello world!");
 });
 
 app.get("*", (req, res) => {
