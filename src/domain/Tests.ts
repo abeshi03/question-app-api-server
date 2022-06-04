@@ -1,6 +1,10 @@
 import { CreateTestQuestionPayload, TestQuestion } from "./TestQuestions";
 import { Category, CreateCategoryPayload } from "./Categories";
 
+type TestCategory = {
+  Category: CreateCategoryPayload;
+};
+
 export interface CreateTestPayload {
   id: number;
   name: string;
@@ -9,7 +13,7 @@ export interface CreateTestPayload {
   testPassingScore: number;
   timeLimit: number;
   TestQuestions?: CreateTestQuestionPayload[];
-  Categories: CreateCategoryPayload[];
+  TestCategories: TestCategory[];
 }
 
 export class Test {
@@ -20,7 +24,7 @@ export class Test {
   private readonly _testPassingScore: number;
   private readonly _timeLimit: number;
   private readonly _testQuestions?: TestQuestion[];
-  private readonly _categories: Category[];
+  private readonly _testCategories: Category[];
 
   public get id(): number {
     return this._id;
@@ -51,7 +55,7 @@ export class Test {
   }
 
   public get categories(): Category[] {
-    return this._categories;
+    return this._testCategories;
   }
 
   public constructor(payload: CreateTestPayload) {
@@ -66,8 +70,8 @@ export class Test {
         (testQuestion) => new TestQuestion(testQuestion)
       );
     }
-    this._categories = payload.Categories.map(
-      (category) => new Category(category)
+    this._testCategories = payload.TestCategories.map(
+      (testCategory) => new Category(testCategory.Category)
     );
   }
 }

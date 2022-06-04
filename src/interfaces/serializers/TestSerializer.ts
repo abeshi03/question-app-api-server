@@ -1,5 +1,9 @@
 /* --- domain ------------------------------------------------------------------------------------------------------ -*/
 import { Test } from "../../domain/Tests";
+import { Category } from "../../domain/Categories";
+
+/* --- serializer ---------------------------------------------------------------------------------------------------- */
+import { CategoryResponse, CategorySerializer } from "./CategorySerializer";
 
 export interface TestResponse {
   id: number;
@@ -8,9 +12,16 @@ export interface TestResponse {
   numberOfQuestions: number;
   testPassingScore: number;
   timeLimit: number;
+  categories: CategoryResponse[];
 }
 
 export class TestSerializer {
+  private categorySerializer: CategorySerializer;
+
+  public constructor() {
+    this.categorySerializer = new CategorySerializer();
+  }
+
   public test(test: Test): TestResponse {
     return {
       id: test.id,
@@ -19,6 +30,9 @@ export class TestSerializer {
       numberOfQuestions: test.numberOfQuestions,
       testPassingScore: test.testPassingScore,
       timeLimit: test.timeLimit,
+      categories: test.categories.map((category) =>
+        this.categorySerializer.category(category)
+      ),
     };
   }
 }
