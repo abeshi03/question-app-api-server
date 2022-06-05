@@ -13,7 +13,15 @@ export class TestRepositoryImpl implements TestRepository {
   }
 
   public async findList(): Promise<Test[]> {
-    const tests = await this.prisma.tests.findMany();
+    const tests = await this.prisma.tests.findMany({
+      include: {
+        TestCategories: {
+          include: {
+            Category: true,
+          },
+        },
+      },
+    });
     return tests.map((test) => new Test(test));
   }
 }
