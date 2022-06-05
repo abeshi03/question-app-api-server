@@ -1,14 +1,21 @@
 /* --- lib ----------------------------------------------------------------------------------------------------------- */
 import express, { Application } from "express";
 import { PrismaClient } from "@prisma/client";
+import cors from "cors";
 
 /* --- router -------------------------------------------------------------------------------------------------------- */
 import { testRoutes } from "./infrastructure/routes/testRoutes";
 
 const app: Application = express();
+const allowedOrigins = ["http://localhost:3000"];
+const options: cors.CorsOptions = {
+  credentials: true,
+  origin: allowedOrigins,
+};
 
 const prisma = new PrismaClient();
 
+app.use(cors(options));
 app.use(express.json());
 
 app.get("/", (req: express.Request, res: express.Response) => {
