@@ -1,5 +1,6 @@
 /* --- lib ---------------------------------------------------------------------------------------------------------- */
 import express from "express";
+import { param } from "express-validator";
 import { PrismaClient } from "@prisma/client";
 
 /* --- controller ---------------------------------------------------------------------------------------------------- */
@@ -15,6 +16,15 @@ export const testRoutes = (prisma: PrismaClient): express.Router => {
     [],
     async (req: express.Request, res: express.Response): Promise<void> => {
       const results = await testController.findList(req);
+      res.status(results.code).send(results);
+    }
+  );
+
+  router.get(
+    "/:id/take",
+    [param("id").isInt().withMessage("Invalid id")],
+    async (req: express.Request, res: express.Response): Promise<void> => {
+      const results = await testController.testTake(req);
       res.status(results.code).send(results);
     }
   );

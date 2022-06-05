@@ -22,6 +22,7 @@ export class TestQuestion {
   private readonly _id: number;
   private readonly _testId: number;
   private readonly _type: string;
+  private readonly _text: string;
   private readonly _required: boolean;
   private readonly _hidden: boolean;
   private readonly _answer?: number | null;
@@ -37,6 +38,10 @@ export class TestQuestion {
 
   public get type(): string {
     return this._type;
+  }
+
+  public get text(): string {
+    return this._text;
   }
 
   public get required(): boolean {
@@ -60,6 +65,7 @@ export class TestQuestion {
     this._id = payload.id;
     this._testId = payload.testId;
     this._type = payload.type;
+    this._text = payload.text;
     this._required = payload.required;
     this._hidden = payload.hidden;
     if (payload.answer) this._answer = payload.answer;
