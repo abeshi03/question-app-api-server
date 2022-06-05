@@ -1,9 +1,10 @@
+import { CreateTestOptionsPayload, TestOptions } from "./TestOptions";
+
 export const questionType = {
   singleOption: "SINGLE_OPTION",
   singleOrMultipleOptions: "SINGLE_OR_MULTIPLE_OPTIONS",
   numberInputting: "NUMBER_INPUTTING",
 } as const;
-
 export type QuestionType = typeof questionType[keyof typeof questionType];
 
 export interface CreateTestQuestionPayload {
@@ -14,7 +15,7 @@ export interface CreateTestQuestionPayload {
   required: boolean;
   hidden: boolean;
   answer?: number;
-  // TestOptions
+  TestOptions: CreateTestOptionsPayload[];
 }
 
 export class TestQuestion {
@@ -24,6 +25,7 @@ export class TestQuestion {
   private readonly _required: boolean;
   private readonly _hidden: boolean;
   private readonly _answer?: number;
+  private readonly _testOptions: TestOptions[];
 
   public get id(): number {
     return this._id;
@@ -49,6 +51,10 @@ export class TestQuestion {
     return this._answer;
   }
 
+  public get testOptions(): TestOptions[] {
+    return this._testOptions;
+  }
+
   public constructor(payload: CreateTestQuestionPayload) {
     this._id = payload.id;
     this._testId = payload.testId;
@@ -56,5 +62,8 @@ export class TestQuestion {
     this._required = payload.required;
     this._hidden = payload.hidden;
     if (payload.answer) this._answer = payload.answer;
+    this._testOptions = payload.TestOptions.map(
+      (testOption) => new TestOptions(testOption)
+    );
   }
 }
