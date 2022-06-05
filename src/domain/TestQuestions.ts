@@ -10,21 +10,21 @@ export type QuestionType = typeof questionType[keyof typeof questionType];
 export interface CreateTestQuestionPayload {
   id: number;
   testId: number;
-  type: QuestionType;
+  type: string;
   text: string;
   required: boolean;
   hidden: boolean;
-  answer?: number;
+  answer: number | null;
   TestOptions: CreateTestOptionsPayload[];
 }
 
 export class TestQuestion {
   private readonly _id: number;
   private readonly _testId: number;
-  private readonly _type: QuestionType;
+  private readonly _type: string;
   private readonly _required: boolean;
   private readonly _hidden: boolean;
-  private readonly _answer?: number;
+  private readonly _answer?: number | null;
   private readonly _testOptions: TestOptions[];
 
   public get id(): number {
@@ -35,7 +35,7 @@ export class TestQuestion {
     return this._testId;
   }
 
-  public get type(): QuestionType {
+  public get type(): string {
     return this._type;
   }
 
@@ -48,6 +48,7 @@ export class TestQuestion {
   }
 
   public get answer(): number | undefined {
+    if (!this._answer) return undefined;
     return this._answer;
   }
 

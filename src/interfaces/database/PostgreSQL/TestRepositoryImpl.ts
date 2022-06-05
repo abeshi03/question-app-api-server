@@ -24,4 +24,23 @@ export class TestRepositoryImpl implements TestRepository {
     });
     return tests.map((test) => new Test(test));
   }
+
+  public async find(testId: number): Promise<Test> {
+    const test = await this.prisma.tests.findUnique({
+      where: {
+        id: testId,
+      },
+      include: {
+        TestQuestions: {
+          include: {
+            TestOptions: true,
+          },
+        },
+      },
+    });
+
+    if (!test) throw new Error("test not found");
+
+    return new Test(test);
+  }
 }

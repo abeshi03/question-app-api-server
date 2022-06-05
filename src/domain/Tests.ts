@@ -13,7 +13,7 @@ export interface CreateTestPayload {
   testPassingScore: number;
   timeLimit: number;
   TestQuestions?: CreateTestQuestionPayload[];
-  TestCategories: TestCategory[];
+  TestCategories?: TestCategory[];
 }
 
 export class Test {
@@ -24,7 +24,7 @@ export class Test {
   private readonly _testPassingScore: number;
   private readonly _timeLimit: number;
   private readonly _testQuestions?: TestQuestion[];
-  private readonly _testCategories: Category[];
+  private readonly _testCategories?: Category[];
 
   public get id(): number {
     return this._id;
@@ -54,7 +54,7 @@ export class Test {
     return this._testQuestions;
   }
 
-  public get categories(): Category[] {
+  public get categories(): Category[] | undefined {
     return this._testCategories;
   }
 
@@ -70,8 +70,10 @@ export class Test {
         (testQuestion) => new TestQuestion(testQuestion)
       );
     }
-    this._testCategories = payload.TestCategories.map(
-      (testCategory) => new Category(testCategory.Category)
-    );
+    if (payload.TestCategories) {
+      this._testCategories = payload.TestCategories.map(
+        (testCategory) => new Category(testCategory.Category)
+      );
+    }
   }
 }

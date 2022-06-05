@@ -1,6 +1,5 @@
 /* --- domain ------------------------------------------------------------------------------------------------------ -*/
 import { Test } from "../../domain/Tests";
-import { Category } from "../../domain/Categories";
 
 /* --- serializer ---------------------------------------------------------------------------------------------------- */
 import { CategoryResponse, CategorySerializer } from "./CategorySerializer";
@@ -30,7 +29,7 @@ export class TestSerializer {
       numberOfQuestions: test.numberOfQuestions,
       testPassingScore: test.testPassingScore,
       timeLimit: test.timeLimit,
-      categories: test.categories.map((category) =>
+      categories: test.categories!.map((category) =>
         this.categorySerializer.category(category)
       ),
     };
