@@ -13,4 +13,8 @@ export class TestUseCase {
   public findList(): Promise<Test[]> {
     return this.repository.findList();
   }
+
+  public find(testId: number): Promise<Test> {
+    return this.repository.find(testId);
+  }
 }

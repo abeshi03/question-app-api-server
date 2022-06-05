@@ -10,7 +10,11 @@ import { TestUseCase } from "../../application/usecases/TestUseCase";
 import { TestRepositoryImpl } from "../database/PostgreSQL/TestRepositoryImpl";
 
 /* --- response ------------------------------------------------------------------------------------------------------ */
-import { TestResponse, TestSerializer } from "../serializers/TestSerializer";
+import {
+  TestResponse,
+  TestSerializer,
+  TestTakeResponse,
+} from "../serializers/TestSerializer";
 import { ApiResponse } from "../serializers/ApplicationSerializer";
 
 export class TestController {
@@ -38,6 +42,28 @@ export class TestController {
       return ApiResponse.success(response);
     } catch (error: any) {
       console.log(error);
+      return ApiResponse.error(500, error.message);
+    }
+  }
+
+  public async testTake(
+    request: Request
+  ): Promise<ApiResponse<TestTakeResponse>> {
+    const errors = validationResult(request);
+
+    if (!errors.isEmpty()) {
+      return ApiResponse.error(422, errors.array()[0].msg);
+    }
+
+    try {
+      const id = Number(request.params.id);
+      const test = await this.useCase.find(id);
+      const response = this.serializer.testTake(test);
+      return ApiResponse.success(response);
+    } catch (error: any) {
+      if (error.message === "test not found") {
+        return ApiResponse.error(404, error.message);
+      }
       return ApiResponse.error(500, error.message);
     }
   }
