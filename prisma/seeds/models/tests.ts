@@ -8,8 +8,8 @@ export const testsData: Prisma.TestsCreateInput[] = [
     thumbnailUri: sampleImageUri,
     numberOfQuestions: 2,
     testPassingScore: 2,
-    timeLimit: 120,
-    createdAt: moment().format()
+    timeLimit: 140,
+    createdAt: moment().format(),
   },
   {
     name: "テスト2",
@@ -17,6 +17,6 @@ export const testsData: Prisma.TestsCreateInput[] = [
     numberOfQuestions: 2,
     testPassingScore: 2,
     timeLimit: 120,
-    createdAt: moment().format()
+    createdAt: moment().format(),
   },
-]
+];
