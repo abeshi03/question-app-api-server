@@ -14,7 +14,10 @@ export interface TestResponse {
   thumbnailUri?: string;
   numberOfQuestions: number;
   testPassingScore: number;
-  timeLimit: number;
+  timeLimit: {
+    minute: number;
+    seconds: number;
+  };
   categories: CategoryResponse[];
 }
 
@@ -23,8 +26,11 @@ export interface TestTakeResponse {
   name: string;
   numberOfQuestions: number;
   testPassingScore: number;
-  timeLimit: number;
-  question: TestQuestionResponse[];
+  timeLimit: {
+    minute: number;
+    seconds: number;
+  };
+  questions: TestQuestionResponse[];
 }
 
 export class TestSerializer {
@@ -36,6 +42,16 @@ export class TestSerializer {
     this.testQuestionSerializer = new TestQuestionSerializer();
   }
 
+  public formattedTimeLimit(timeLimit__seconds: number): {
+    minute: number;
+    seconds: number;
+  } {
+    return {
+      minute: Math.floor((timeLimit__seconds % 3600) / 60),
+      seconds: timeLimit__seconds % 60,
+    };
+  }
+
   public test(test: Test): TestResponse {
     return {
       id: test.id,
@@ -43,7 +59,7 @@ export class TestSerializer {
       thumbnailUri: test.thumbnailUri ? test.thumbnailUri : undefined,
       numberOfQuestions: test.numberOfQuestions,
       testPassingScore: test.testPassingScore,
-      timeLimit: test.timeLimit,
+      timeLimit: this.formattedTimeLimit(test.timeLimit),
       categories: test.categories!.map((category) =>
         this.categorySerializer.category(category)
       ),
@@ -54,10 +70,10 @@ export class TestSerializer {
     return {
       id: test.id,
       name: test.name,
-      timeLimit: test.timeLimit,
+      timeLimit: this.formattedTimeLimit(test.timeLimit),
       numberOfQuestions: test.numberOfQuestions,
       testPassingScore: test.testPassingScore,
-      question: test.testQuestions!.map((testQuestion) =>
+      questions: test.testQuestions!.map((testQuestion) =>
         this.testQuestionSerializer.testQuestion(testQuestion)
       ),
     };
