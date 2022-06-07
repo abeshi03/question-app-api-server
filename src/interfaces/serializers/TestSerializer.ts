@@ -15,7 +15,7 @@ export interface TestResponse {
   numberOfQuestions: number;
   testPassingScore: number;
   timeLimit: {
-    minute: number;
+    minutes: number;
     seconds: number;
   };
   categories: CategoryResponse[];
@@ -27,7 +27,7 @@ export interface TestTakeResponse {
   numberOfQuestions: number;
   testPassingScore: number;
   timeLimit: {
-    minute: number;
+    minutes: number;
     seconds: number;
   };
   questions: TestQuestionResponse[];
@@ -43,11 +43,11 @@ export class TestSerializer {
   }
 
   public formattedTimeLimit(timeLimit__seconds: number): {
-    minute: number;
+    minutes: number;
     seconds: number;
   } {
     return {
-      minute: Math.floor((timeLimit__seconds % 3600) / 60),
+      minutes: Math.floor((timeLimit__seconds % 3600) / 60),
       seconds: timeLimit__seconds % 60,
     };
   }
