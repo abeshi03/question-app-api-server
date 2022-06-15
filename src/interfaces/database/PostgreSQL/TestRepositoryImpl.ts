@@ -105,8 +105,15 @@ export class TestRepositoryImpl implements TestRepository {
           throw new Error("option not found");
         }
 
+        let isCorrectOptions: number[] = [];
         for (const option of options) {
-          if (option.isCorrectAnswer) numberOfCorrectAnswers++;
+          if (option.isCorrectAnswer) {
+            isCorrectOptions.push(option.id);
+          }
+        }
+
+        if (isCorrectOptions.toString() === answer.payload.toString()) {
+          numberOfCorrectAnswers++;
         }
       }
     }
