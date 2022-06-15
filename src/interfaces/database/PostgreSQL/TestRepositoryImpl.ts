@@ -112,7 +112,10 @@ export class TestRepositoryImpl implements TestRepository {
           }
         }
 
-        if (isCorrectOptions.toString() === answer.payload.toString()) {
+        if (
+          isCorrectOptions.sort().toString() ===
+          answer.payload.sort().toString()
+        ) {
           numberOfCorrectAnswers++;
         }
       }
