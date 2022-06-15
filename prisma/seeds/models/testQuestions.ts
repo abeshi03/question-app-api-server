@@ -22,6 +22,14 @@ export const testQuestionsData: Prisma.TestQuestionsCreateInput[] = [
     createdAt: moment().format(),
   },
   {
+    Test: { connect: { id: 1 } },
+    type: questionType.singleOption,
+    text: "信号機の色に含まれるのは？",
+    required: true,
+    hidden: false,
+    createdAt: moment().format(),
+  },
+  {
     Test: { connect: { id: 2 } },
     type: questionType.singleOption,
     text: "信号機の色に含まれるのは？",
