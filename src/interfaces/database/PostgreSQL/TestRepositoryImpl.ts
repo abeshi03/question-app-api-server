@@ -132,7 +132,6 @@ export class TestRepositoryImpl implements TestRepository {
       req.answers
     );
 
-    console.log(numberOfCorrectAnswers);
     return {
       isPassed: test.testPassingScore <= numberOfCorrectAnswers,
     };
