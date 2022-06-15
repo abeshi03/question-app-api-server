@@ -33,8 +33,8 @@ export const testRoutes = (prisma: PrismaClient): express.Router => {
   );
 
   router.post(
-    "/:id/submit",
-    [param("id").isInt().withMessage("Invalid id")],
+    "/:testId/submit",
+    [param("testId").isInt().withMessage("Invalid testId")],
     async (
       req: TestPassJudgmentRequest,
       res: express.Response

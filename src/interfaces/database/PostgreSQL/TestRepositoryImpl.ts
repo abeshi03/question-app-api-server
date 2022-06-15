@@ -58,13 +58,6 @@ export class TestRepositoryImpl implements TestRepository {
       where: {
         id: testId,
       },
-      include: {
-        TestQuestions: {
-          include: {
-            TestOptions: true,
-          },
-        },
-      },
     });
 
     if (!test) {

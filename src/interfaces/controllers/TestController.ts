@@ -80,7 +80,7 @@ export class TestController {
 
     try {
       const id = Number(request.params.testId);
-      const response = await this.useCase.passJudgment(id, request.params);
+      const response = await this.useCase.passJudgment(id, request.body);
       return ApiResponse.success(response);
     } catch (error: any) {
       if (error.message === "test not found") {
