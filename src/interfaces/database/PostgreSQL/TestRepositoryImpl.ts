@@ -6,7 +6,10 @@ import { Test } from "../../../domain/Tests";
 import { questionType } from "../../../domain/TestQuestions";
 
 /* --- request ------------------------------------------------------------------------------------------------------- */
-import { TestPassJudgmentParams } from "../../request/TestPassJudgmentRequest";
+import {
+  Answer,
+  TestPassJudgmentParams,
+} from "../../request/TestPassJudgmentRequest";
 
 /* --- repository ---------------------------------------------------------------------------------------------------- */
 import { TestRepository } from "../repository/TestRepository";
@@ -50,23 +53,9 @@ export class TestRepositoryImpl implements TestRepository {
     return new Test(test);
   }
 
-  public async passJudgment(
-    testId: number,
-    req: TestPassJudgmentParams
-  ): Promise<{ isPassed: boolean }> {
-    const test = await this.prisma.tests.findUnique({
-      where: {
-        id: testId,
-      },
-    });
-
-    if (!test) {
-      throw new Error("test not found");
-    }
-
+  private async getNumberOfCorrectAnswers(answers: Answer[]): Promise<number> {
     let numberOfCorrectAnswers: number = 0;
-
-    for (const answer of req.answers) {
+    for (const answer of answers) {
       const question = await this.prisma.testQuestions.findUnique({
         where: {
           id: answer.questionId,
@@ -121,6 +110,27 @@ export class TestRepositoryImpl implements TestRepository {
         }
       }
     }
+
+    return numberOfCorrectAnswers;
+  }
+
+  public async passJudgment(
+    testId: number,
+    req: TestPassJudgmentParams
+  ): Promise<{ isPassed: boolean }> {
+    const test = await this.prisma.tests.findUnique({
+      where: {
+        id: testId,
+      },
+    });
+
+    if (!test) {
+      throw new Error("test not found");
+    }
+
+    const numberOfCorrectAnswers = await this.getNumberOfCorrectAnswers(
+      req.answers
+    );
 
     console.log(numberOfCorrectAnswers);
     return {
