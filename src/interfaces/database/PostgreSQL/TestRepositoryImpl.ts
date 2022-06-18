@@ -60,67 +60,76 @@ export class TestRepositoryImpl implements TestRepository {
         where: {
           id: answer.questionId,
         },
+        include: {
+          TestOptions: true,
+        },
       });
 
       if (!question) throw new Error("question not found");
 
-      if (answer.type === questionType.numberInputting) {
-        if (typeof answer.payload !== "number")
-          throw new Error("Invalid payload for numberInputting");
+      switch (answer.type) {
+        case questionType.numberInputting: {
+          /* --- 数字回答採点 ------------------------------------------------------------------------------------------ */
+          if (typeof answer.payload !== "number")
+            throw new Error("Invalid payload for numberInputting");
 
-        if (answer.payload === question.answer) {
-          numberOfCorrectAnswers++;
-        }
-      }
-
-      if (answer.type === questionType.singleOption) {
-        if (typeof answer.payload !== "number")
-          throw new Error("Invalid payload for singleOption");
-
-        const option = await this.prisma.testOptions.findUnique({
-          where: {
-            id: answer.payload,
-          },
-        });
-
-        if (!option) throw new Error("Invalid option id for singleOption");
-
-        if (option.isCorrectAnswer) numberOfCorrectAnswers++;
-      }
-
-      if (answer.type === questionType.singleOrMultipleOptions) {
-        if (typeof answer.payload === "number") {
-          throw new Error("Invalid payload for singleOrMultipleOptions");
-        }
-
-        const options = await this.prisma.testOptions.findMany({
-          where: {
-            id: {
-              in: answer.payload,
-            },
-          },
-        });
-
-        if (!options) {
-          throw new Error("option not found");
-        }
-
-        let isCorrectOptions: number[] = [];
-        for (const option of options) {
-          if (option.isCorrectAnswer) {
-            isCorrectOptions.push(option.id);
+          if (answer.payload === question.answer) {
+            numberOfCorrectAnswers++;
           }
+          break;
         }
 
-        if (
-          isCorrectOptions.sort().toString() ===
-          answer.payload.sort().toString()
-        ) {
-          numberOfCorrectAnswers++;
+        /* --- 単数回答採点 -------------------------------------------------------------------------------------------- */
+        case questionType.singleOption: {
+          if (typeof answer.payload !== "number")
+            throw new Error("Invalid payload for singleOption");
+
+          const option = await this.prisma.testOptions.findUnique({
+            where: {
+              id: answer.payload,
+            },
+          });
+
+          if (!option) throw new Error("Invalid option id for singleOption");
+
+          if (option.isCorrectAnswer) numberOfCorrectAnswers++;
+          break;
+        }
+
+        /* --- 複数回答採点 -------------------------------------------------------------------------------------------- */
+        case questionType.singleOrMultipleOptions: {
+          if (typeof answer.payload === "number") {
+            throw new Error("Invalid payload for singleOrMultipleOptions");
+          }
+
+          const options = await this.prisma.testOptions.findMany({
+            where: {
+              id: {
+                in: question.TestOptions.map((option) => option.id),
+              },
+            },
+          });
+
+          if (!options) {
+            throw new Error("option not found");
+          }
+
+          const isCorrectOptions: number[] = options
+            .filter((option) => option.isCorrectAnswer)
+            .map((option) => {
+              return option.id;
+            });
+
+          if (
+            isCorrectOptions.sort().toString() ===
+            answer.payload.sort().toString()
+          ) {
+            numberOfCorrectAnswers++;
+          }
+          break;
         }
       }
     }
-
     return numberOfCorrectAnswers;
   }
 
@@ -141,6 +150,8 @@ export class TestRepositoryImpl implements TestRepository {
     const numberOfCorrectAnswers = await this.getNumberOfCorrectAnswers(
       req.answers
     );
+
+    await Promise.all([test, numberOfCorrectAnswers]);
 
     return {
       isPassed: test.testPassingScore <= numberOfCorrectAnswers,
