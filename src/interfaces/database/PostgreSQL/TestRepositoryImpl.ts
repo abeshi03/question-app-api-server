@@ -151,8 +151,6 @@ export class TestRepositoryImpl implements TestRepository {
       req.answers
     );
 
-    await Promise.all([test, numberOfCorrectAnswers]);
-
     return {
       isPassed: test.testPassingScore <= numberOfCorrectAnswers,
     };
