@@ -16,6 +16,7 @@ import {
   TestTakeResponse,
 } from "../serializers/TestSerializer";
 import { ApiResponse } from "../serializers/ApplicationSerializer";
+import { TestPassJudgmentRequest } from "../request/TestPassJudgmentRequest";
 
 export class TestController {
   private useCase: TestUseCase;
@@ -62,6 +63,42 @@ export class TestController {
       return ApiResponse.success(response);
     } catch (error: any) {
       if (error.message === "test not found") {
+        return ApiResponse.error(404, error.message);
+      }
+      return ApiResponse.error(500, error.message);
+    }
+  }
+
+  public async passJudgment(
+    request: TestPassJudgmentRequest
+  ): Promise<ApiResponse<{ isPassed: boolean }>> {
+    const errors = validationResult(request);
+
+    if (!errors.isEmpty()) {
+      return ApiResponse.error(422, errors.array()[0].msg);
+    }
+
+    try {
+      const id = Number(request.params.testId);
+      const response = await this.useCase.passJudgment(id, request.body);
+      return ApiResponse.success(response);
+    } catch (error: any) {
+      if (error.message === "test not found") {
+        return ApiResponse.error(404, error.message);
+      }
+      if (error.message === "question not found") {
+        return ApiResponse.error(404, error.message);
+      }
+      if (error.message === "Invalid payload for numberInputting") {
+        return ApiResponse.error(400, error.message);
+      }
+      if (error.message === "Invalid payload for singleOption") {
+        return ApiResponse.error(400, error.message);
+      }
+      if (error.message === "Invalid payload for singleOrMultipleOptions") {
+        return ApiResponse.error(400, error.message);
+      }
+      if (error.message === "option not found") {
         return ApiResponse.error(404, error.message);
       }
       return ApiResponse.error(500, error.message);
