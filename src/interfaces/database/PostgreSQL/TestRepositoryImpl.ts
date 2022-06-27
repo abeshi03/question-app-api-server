@@ -70,10 +70,10 @@ export class TestRepositoryImpl implements TestRepository {
       switch (answer.type) {
         case questionType.numberInputting: {
           /* --- 数字回答採点 ------------------------------------------------------------------------------------------ */
-          if (typeof answer.payload !== "number")
+          if (typeof answer.payload !== "string")
             throw new Error("Invalid payload for numberInputting");
 
-          if (answer.payload === question.answer) {
+          if (Number(answer.payload) === question.answer) {
             numberOfCorrectAnswers++;
           }
           break;
@@ -81,12 +81,12 @@ export class TestRepositoryImpl implements TestRepository {
 
         /* --- 単数回答採点 -------------------------------------------------------------------------------------------- */
         case questionType.singleOption: {
-          if (typeof answer.payload !== "number")
+          if (typeof answer.payload !== "string")
             throw new Error("Invalid payload for singleOption");
 
           const option = await this.prisma.testOptions.findUnique({
             where: {
-              id: answer.payload,
+              id: Number(answer.payload),
             },
           });
 
@@ -98,7 +98,7 @@ export class TestRepositoryImpl implements TestRepository {
 
         /* --- 複数回答採点 -------------------------------------------------------------------------------------------- */
         case questionType.singleOrMultipleOptions: {
-          if (typeof answer.payload === "number") {
+          if (typeof answer.payload === "string") {
             throw new Error("Invalid payload for singleOrMultipleOptions");
           }
 

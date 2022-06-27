@@ -4,7 +4,7 @@ import { QuestionType } from "../../domain/TestQuestions";
 export interface Answer {
   type: QuestionType;
   questionId: number;
-  payload: number | number[];
+  payload: string | string[];
 }
 
 export interface TestPassJudgmentParams {
