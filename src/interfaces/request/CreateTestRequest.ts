@@ -1,5 +1,4 @@
 import { Request } from "express";
-import { QuestionType } from "../../domain/TestQuestions";
 
 interface CreateOptionParams {
   text: string;
@@ -10,12 +9,12 @@ export interface CreateTestParams {
   name: string;
   thumbnailUri?: string;
   testPassingScore: number;
-  timeLimit: number;
+  timeLimit__seconds: number;
   categoriesIds: string[];
   questions: {
-    type: QuestionType;
+    type: string;
     text: string;
-    answer?: string;
+    answer?: number;
     options?: CreateOptionParams[];
   }[];
 }
