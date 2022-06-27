@@ -6,6 +6,8 @@ export interface TestRepository {
 
   find: (testId: number) => Promise<Test>;
 
+  create: () => Promise<{ questionId: number }>;
+
   passJudgment: (
     testId: number,
     req: TestPassJudgmentParams
