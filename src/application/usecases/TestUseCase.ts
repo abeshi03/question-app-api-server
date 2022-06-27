@@ -4,6 +4,7 @@ import { Test } from "../../domain/Tests";
 /* --- repository ---------------------------------------------------------------------------------------------------- */
 import { TestRepository } from "../../interfaces/database/repository/TestRepository";
 import { TestPassJudgmentParams } from "../../interfaces/request/TestPassJudgmentRequest";
+import { CreateTestParams } from "../../interfaces/request/CreateTestRequest";
 
 export class TestUseCase {
   private repository: TestRepository;
@@ -17,6 +18,10 @@ export class TestUseCase {
 
   public find(testId: number): Promise<Test> {
     return this.repository.find(testId);
+  }
+
+  public create(query: CreateTestParams): Promise<number> {
+    return this.repository.create(query);
   }
 
   public passJudgment(
