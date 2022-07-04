@@ -69,6 +69,21 @@ export class TestController {
     }
   }
 
+  public async create(request: Request): Promise<ApiResponse<number>> {
+    const errors = validationResult(request);
+
+    if (!errors.isEmpty()) {
+      return ApiResponse.error(422, errors.array()[0].msg);
+    }
+
+    try {
+      const testId = await this.useCase.create(request.body);
+      return ApiResponse.success(testId);
+    } catch (error: any) {
+      return ApiResponse.error(500, error.message);
+    }
+  }
+
   public async passJudgment(
     request: TestPassJudgmentRequest
   ): Promise<ApiResponse<{ isPassed: boolean }>> {

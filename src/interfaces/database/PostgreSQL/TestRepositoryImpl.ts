@@ -13,6 +13,7 @@ import {
 
 /* --- repository ---------------------------------------------------------------------------------------------------- */
 import { TestRepository } from "../repository/TestRepository";
+import { CreateTestParams } from "../../request/CreateTestRequest";
 
 export class TestRepositoryImpl implements TestRepository {
   private prisma: PrismaClient;
@@ -131,6 +132,75 @@ export class TestRepositoryImpl implements TestRepository {
       }
     }
     return numberOfCorrectAnswers;
+  }
+
+  public async create(query: CreateTestParams): Promise<number> {
+    const test = await this.prisma.tests.create({
+      data: {
+        name: query.name,
+        thumbnailUri: null,
+        timeLimit: query.timeLimit__seconds,
+        numberOfQuestions: query.questions.length,
+        testPassingScore: query.testPassingScore,
+        createdAt: new Date(),
+        TestCategories: {
+          createMany: {
+            data: query.categoriesIds.map((categoryId) => {
+              return { categoryId: Number(categoryId), createdAt: new Date() };
+            }),
+          },
+        },
+      },
+    });
+
+    await this.createLessonTest(test.id, query);
+
+    return test.id;
+  }
+
+  private async createLessonTest(testId: number, test: CreateTestParams) {
+    for (const question of test.questions) {
+      if (question.type === questionType.numberInputting) {
+        await this.prisma.testQuestions.create({
+          data: {
+            testId,
+            type: question.type,
+            text: question.text,
+            required: true,
+            answer: Number(question.answer),
+            createdAt: new Date(),
+          },
+        });
+      }
+
+      if (
+        question.type === questionType.singleOption ||
+        question.type === questionType.singleOrMultipleOptions
+      ) {
+        if (!question.options) throw new Error("question.options missing");
+
+        await this.prisma.testQuestions.create({
+          data: {
+            testId,
+            type: question.type,
+            text: question.text,
+            required: true,
+            createdAt: new Date(),
+            TestOptions: {
+              createMany: {
+                data: question.options.map((option) => {
+                  return {
+                    text: option.text,
+                    isCorrectAnswer: option.isCorrectAnswer,
+                    createdAt: new Date(),
+                  };
+                }),
+              },
+            },
+          },
+        });
+      }
+    }
   }
 
   public async passJudgment(
