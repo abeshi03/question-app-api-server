@@ -135,8 +135,7 @@ export class TestRepositoryImpl implements TestRepository {
   }
 
   public async create(query: CreateTestParams): Promise<number> {
-    const transactionItems = [];
-    const test = this.prisma.tests.create({
+    const test = await this.prisma.tests.create({
       data: {
         name: query.name,
         thumbnailUri: null,
@@ -154,32 +153,24 @@ export class TestRepositoryImpl implements TestRepository {
       },
     });
 
-    transactionItems.push(test);
-    const testId = await test.then((res) => res.id);
+    await this.createLessonTest(test.id, query);
 
-    transactionItems.push(...this.createLessonTest(testId, query));
-
-    await this.prisma.$transaction(transactionItems);
-
-    return testId;
+    return test.id;
   }
-  private createLessonTest(testId: number, test: CreateTestParams): any[] {
-    const transactionItems = [];
 
+  private async createLessonTest(testId: number, test: CreateTestParams) {
     for (const question of test.questions) {
       if (question.type === questionType.numberInputting) {
-        transactionItems.push(
-          this.prisma.testQuestions.create({
-            data: {
-              testId,
-              type: question.type,
-              text: question.text,
-              required: true,
-              answer: Number(question.answer),
-              createdAt: new Date(),
-            },
-          })
-        );
+        await this.prisma.testQuestions.create({
+          data: {
+            testId,
+            type: question.type,
+            text: question.text,
+            required: true,
+            answer: Number(question.answer),
+            createdAt: new Date(),
+          },
+        });
       }
 
       if (
@@ -187,32 +178,29 @@ export class TestRepositoryImpl implements TestRepository {
         question.type === questionType.singleOrMultipleOptions
       ) {
         if (!question.options) throw new Error("question.options missing");
-        transactionItems.push(
-          this.prisma.testQuestions.create({
-            data: {
-              testId,
-              type: question.type,
-              text: question.text,
-              required: true,
-              createdAt: new Date(),
-              TestOptions: {
-                createMany: {
-                  data: question.options.map((option) => {
-                    return {
-                      text: option.text,
-                      isCorrectAnswer: option.isCorrectAnswer,
-                      createdAt: new Date(),
-                    };
-                  }),
-                },
+
+        await this.prisma.testQuestions.create({
+          data: {
+            testId,
+            type: question.type,
+            text: question.text,
+            required: true,
+            createdAt: new Date(),
+            TestOptions: {
+              createMany: {
+                data: question.options.map((option) => {
+                  return {
+                    text: option.text,
+                    isCorrectAnswer: option.isCorrectAnswer,
+                    createdAt: new Date(),
+                  };
+                }),
               },
             },
-          })
-        );
+          },
+        });
       }
     }
-
-    return transactionItems;
   }
 
   public async passJudgment(
